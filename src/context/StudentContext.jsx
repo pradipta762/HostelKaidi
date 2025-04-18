@@ -8,17 +8,17 @@ export const StudentProvider = ({ children }) => {
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("studentData"));
-    if (storedData) setStudentData(storedData);
+    if (storedData) {
+      setStudentData(storedData);
+    } else {
+      saveStudentData(studentDetails);  // Only save default if nothing is there
+    }
   }, []);
 
   const saveStudentData = (data) => {
     localStorage.setItem("studentData", JSON.stringify(data));
     setStudentData(data);
   };
-
-  useEffect(() => {
-    saveStudentData(studentDetails);
-  }, []);
 
   return (
     <StudentContext.Provider value={{ studentData, saveStudentData }}>
