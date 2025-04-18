@@ -8,12 +8,14 @@ import Footer from './Components/Footer/Footer'
 
 function App() {
   return (
-    <>
+    <div className="flex flex-col h-screen overflow-hidden">
       <Header />
-      <Outlet />
+      <main className="flex-1 overflow-y-auto px-4 pb-16"> {/* pb-16 to avoid overlap with footer */}
+        <Outlet />
+      </main>
       <Footer />
-    </>
-  )
+    </div>
+  );
 }
 
 export default App
