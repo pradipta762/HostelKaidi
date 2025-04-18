@@ -1,15 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { StudentContext } from "../../context/StudentContext";
 
 const ScanEntry = () => {
   const { studentData } = useContext(StudentContext);
   const navigate = useNavigate();
-  console.log(studentData);
 
-  setTimeout(() => {
-    navigate("/visit-form");
-  }, 2000);
+  useEffect(() => {
+    if (studentData?.uniqid) {
+      const timer = setTimeout(() => navigate("/visit-form"), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [studentData, navigate]);
 
   return (
     <div className="flex items-center justify-center h-screen">

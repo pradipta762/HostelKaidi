@@ -6,53 +6,34 @@ const SecurityScanner = () => {
   const [message, setMessage] = useState("");
   const { saveStudentData } = useContext(StudentContext);
 
-  const hostelDeadlineHour = 22;
-  const hostelDeadlineMinute = 0;
-
   const isAfterDeadline = (date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return hours > hostelDeadlineHour || (hours === hostelDeadlineHour && minutes > hostelDeadlineMinute);
+    const deadline = new Date();
+    deadline.setHours(22, 0, 0, 0);
+    return date > deadline;
   };
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner("reader", {
-      fps: 10,
-      qrbox: 300,
-    });
+    const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 300 });
 
     scanner.render(
       (decodedText) => {
         try {
-          const scannedData = JSON.parse(decodedText);
+          const data = JSON.parse(decodedText);
           const returnTime = new Date();
-          const isLate = isAfterDeadline(returnTime);
-          console.log(scannedData)
-          scannedData.isReturned = true;
-          scannedData.returnTime = returnTime.toLocaleString();
-          scannedData.isLate = isLate;
-          console.log(scannedData)
-          saveStudentData(scannedData);
-          setMessage(isLate ? "Student is Late!" : "Student Returned on Time");
-
-          // Stop scanner
-          scanner.clear().then(() => {
-            console.log("Scanner stopped");
-          }).catch((err) => {
-            console.error("Failed to clear scanner", err);
-          });
-
-        } catch (err) {
+          data.isReturned = true;
+          data.returnTime = returnTime.toLocaleString();
+          data.isLate = isAfterDeadline(returnTime);
+          saveStudentData(data);
+          setMessage(data.isLate ? "Student is Late!" : "Student Returned on Time");
+          scanner.clear();
+        } catch {
           setMessage("Invalid QR Code!");
         }
       },
-      (error) => {
-        console.warn(`Scan error: ${error}`);
-      }
+      (error) => console.warn(`Scan error: ${error}`)
     );
   }, [saveStudentData]);
 
-  // Auto-clear the message after 3 seconds
   useEffect(() => {
     if (message) {
       const timeout = setTimeout(() => setMessage(""), 3000);

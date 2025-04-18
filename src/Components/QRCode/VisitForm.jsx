@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStudent } from '../../context/StudentContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const VisitForm = () => {
   const { studentData, saveStudentData } = useStudent();
@@ -13,22 +14,30 @@ const VisitForm = () => {
     return uniqueId;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(studentData)
 
     const qrData = {
       ...studentData,
-      qrId: generateUniqueQRId(),
+      qrCodeId: generateUniqueQRId(),
       exitDate: new Date().toLocaleDateString(),
       exitTime: new Date().toLocaleTimeString(),
       place: placeOfvisit,
       purpose: purposeOfvisit,
       isReturned: false
     }
+    try {
+      const response = await axios.post('https://hostelkaidi-13.onrender.com/qr-display', qrData);
+      if (response.data.status) {
+        navigate('/qr-display');
+      } else {
+        alert(response.data.message);
+      }
+    } catch (err) {
+      alert('Error fetching data');
+    }
     saveStudentData(qrData)
     console.log(qrData)
-    navigate('/qr-display');
   };
 
   return (

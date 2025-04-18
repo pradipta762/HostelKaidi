@@ -1,3 +1,4 @@
+// src/pages/Signup.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
@@ -12,9 +13,8 @@ const Signup = () => {
     studentPhoneNo: '',
     hostelName: '',
     roomNo: '',
-    uniqid: '',
     password: '',
-    type: 'student', // or 'security'
+    Usertype: 'student',
   });
 
   const navigate = useNavigate();
@@ -42,25 +42,23 @@ const Signup = () => {
   return (
     <form onSubmit={handleSignup} className="max-w-xl mx-auto mt-10 bg-white p-6 rounded shadow">
       <h2 className="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
-
-      {Object.entries({
-        name: 'Full Name',
-        regno: 'Registration No',
-        department: 'Department',
-        parentName: 'Parent Name',
-        parentPhoneNo: 'Parent Phone No',
-        studentPhoneNo: 'Student Phone No',
-        hostelName: 'Hostel Name',
-        roomNo: 'Room No',
-        uniqid: 'Unique ID',
-        password: 'Password',
-      }).map(([key, label]) => (
+      {[
+        { name: 'name', placeholder: 'Full Name' },
+        { name: 'regno', placeholder: 'Registration No' },
+        { name: 'department', placeholder: 'Department' },
+        { name: 'parentName', placeholder: 'Parent Name' },
+        { name: 'parentPhoneNo', placeholder: 'Parent Phone No' },
+        { name: 'studentPhoneNo', placeholder: 'Student Phone No' },
+        { name: 'hostelName', placeholder: 'Hostel Name' },
+        { name: 'roomNo', placeholder: 'Room No' },
+        { name: 'password', placeholder: 'Password', type: 'password' },
+      ].map(({ name, placeholder, type = 'text' }) => (
         <input
-          key={key}
-          type={key === 'password' ? 'password' : 'text'}
-          name={key}
-          placeholder={label}
-          value={formData[key]}
+          key={name}
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          value={formData[name]}
           onChange={handleChange}
           className="w-full p-2 border rounded mb-3"
           required
@@ -68,10 +66,11 @@ const Signup = () => {
       ))}
 
       <select
-        name="type"
-        value={formData.type}
+        name="Usertype"
+        value={formData.Usertype}
         onChange={handleChange}
         className="w-full p-2 border rounded mb-4"
+        required
       >
         <option value="student">Student</option>
         <option value="security">Security</option>

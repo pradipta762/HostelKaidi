@@ -1,51 +1,23 @@
-// VisitQRPage.js
 import React, { useContext, useEffect, useState } from 'react';
 import QRCodeDisplay from './QRCodeDisplay';
 import { StudentContext } from '../../context/StudentContext';
 import { useNavigate } from 'react-router-dom';
 
 const VisitQRPage = () => {
-  const { saveStudentData } = useContext(StudentContext);
-  const [localStudentData, setLocalStudentData] = useState({});
+  const { studentData, saveStudentData } = useContext(StudentContext);
   const [isReturned, setIsReturned] = useState(false);
   const navigate = useNavigate();
 
-  const handleReturn = () => {
-    setTimeout(() => {
-      localStorage.removeItem("studentData");
-      saveStudentData({});
-      navigate('/');
-    }, 3000);
-  };
-
-  // Load data on mount
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("studentData"));
-
-    if (storedData) {
-      if (storedData.isReturned) {
-        setIsReturned(true);
-        handleReturn();
-      } else {
-        setLocalStudentData(storedData);
-        saveStudentData(storedData);
-      }
+    if (studentData?.isReturned) {
+      setIsReturned(true);
+      const timeout = setTimeout(() => {
+        saveStudentData({});
+        navigate('/');
+      }, 3000);
+      return () => clearTimeout(timeout);
     }
-  }, []);
-
-  // Detect return updates from another tab (optional)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const updatedData = JSON.parse(localStorage.getItem("studentData"));
-      if (updatedData?.isReturned) {
-        setIsReturned(true);
-        handleReturn();
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  }, [studentData]);
 
   return (
     <div className="max-w-md mx-auto p-6 mt-10 bg-gray-100 rounded-xl shadow-lg">
@@ -57,7 +29,7 @@ const VisitQRPage = () => {
         </p>
       ) : (
         <>
-          <QRCodeDisplay studentData={localStudentData} />
+          <QRCodeDisplay studentData={studentData} />
           <p className="mt-4 text-center text-sm text-gray-600">
             Please show this QR code to the security guard when returning.
           </p>

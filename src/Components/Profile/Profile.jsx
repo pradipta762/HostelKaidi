@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { StudentContext } from '../../context/StudentContext';
 
 const Profile = ({ onClose }) => {
-  const student = JSON.parse(localStorage.getItem('studentData'));
+  const { studentData } = useContext(StudentContext);
 
-  if (!student) {
+  if (!studentData?.name) {
     return (
       <div className="p-4 bg-white rounded shadow-lg w-full max-w-sm mx-auto mt-10">
         <p className="text-gray-700">No profile data found.</p>
@@ -27,11 +28,11 @@ const Profile = ({ onClose }) => {
           className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-green-500"
         />
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-1">{student.name}</h2>
-        <p className="text-sm text-gray-600 mb-1"><strong>Reg No:</strong> {student.regId}</p>
-        <p className="text-sm text-gray-600 mb-1"><strong>Department:</strong> {student.department}</p>
-        <p className="text-sm text-gray-600 mb-1"><strong>Year:</strong> {student.year} Year</p>
-        <p className="text-sm text-gray-600"><strong>Hostel:</strong> {student.hostelName}, Room No: {student.roomNo}</p>
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">{studentData.name}</h2>
+        <p className="text-sm text-gray-600 mb-1"><strong>Reg No:</strong> {studentData.regId}</p>
+        <p className="text-sm text-gray-600 mb-1"><strong>Department:</strong> {studentData.department}</p>
+        <p className="text-sm text-gray-600 mb-1"><strong>Year:</strong> {studentData.year} Year</p>
+        <p className="text-sm text-gray-600"><strong>Hostel:</strong> {studentData.hostelName}, Room No: {studentData.roomNo}</p>
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ const Footer = () => {
         <div className="flex-1 flex justify-center">
           <button
             onClick={handleQRCodeClick}
-            className="text-3xl text-blue-600 hover:text-blue-800 flex items-center justify-center"
+            className="text-3xl text-blue-600 hover:text-blue-800 flex items-center justify-center cursor-pointer"
           >
             <MdQrCodeScanner />
           </button>
@@ -28,7 +28,7 @@ const Footer = () => {
         <div className="flex-1 flex justify-center">
           <button
             onClick={() => setShowProfile(true)}
-            className="text-2xl text-gray-700 hover:text-black flex items-center justify-center"
+            className="text-2xl text-gray-700 hover:text-black flex items-center justify-center cursor-pointer"
           >
             <FaUserAlt />
           </button>
