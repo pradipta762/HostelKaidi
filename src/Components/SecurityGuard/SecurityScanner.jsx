@@ -27,11 +27,11 @@ const SecurityScanner = () => {
           const scannedData = JSON.parse(decodedText);
           const returnTime = new Date();
           const isLate = isAfterDeadline(returnTime);
-
+          console.log(scannedData)
           scannedData.isReturned = true;
           scannedData.returnTime = returnTime.toLocaleString();
           scannedData.isLate = isLate;
-
+          console.log(scannedData)
           saveStudentData(scannedData);
           setMessage(isLate ? "Student is Late!" : "Student Returned on Time");
 
