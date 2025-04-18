@@ -23,7 +23,8 @@ const VisitForm = () => {
       exitDate: new Date().toLocaleDateString(),
       exitTime: new Date().toLocaleTimeString(),
       place: placeOfvisit,
-      purpose: purposeOfvisit
+      purpose: purposeOfvisit,
+      isReturned: false
     }
     saveStudentData(qrData)
     console.log(qrData)
