@@ -1,4 +1,3 @@
-// VisitQRPage.js
 import React, { useContext, useEffect, useState } from 'react';
 import QRCodeDisplay from './QRCodeDisplay';
 import { StudentContext } from '../../context/StudentContext';
@@ -11,11 +10,10 @@ const VisitQRPage = () => {
   const navigate = useNavigate();
 
   const handleReturn = () => {
-    setTimeout(() => {
-      localStorage.removeItem("studentData");
-      saveStudentData({});
-      navigate('/');
-    }, 3000);
+    // Remove student data immediately and clear context data
+    localStorage.removeItem("studentData");
+    saveStudentData({});
+    navigate('/');  // Redirect to home or other page
   };
 
   // Load data on mount
@@ -25,13 +23,13 @@ const VisitQRPage = () => {
     if (storedData) {
       if (storedData.isReturned) {
         setIsReturned(true);
-        handleReturn();
+        handleReturn();  // Trigger return process immediately
       } else {
         setLocalStudentData(storedData);
         saveStudentData(storedData);
       }
     }
-  }, []);
+  }, [saveStudentData]);
 
   // Detect return updates from another tab (optional)
   useEffect(() => {
