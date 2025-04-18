@@ -27,19 +27,19 @@ const SecurityScanner = () => {
           const scannedData = JSON.parse(decodedText);
           const returnTime = new Date();
           const isLate = isAfterDeadline(returnTime);
-
+          console.log(scannedData)
           scannedData.isReturned = true;
           scannedData.returnTime = returnTime.toLocaleString();
           scannedData.isLate = isLate;
-
+          console.log(scannedData)
           saveStudentData(scannedData);
           setMessage(isLate ? "Student is Late!" : "Student Returned on Time");
 
-          // Stop scanner immediately after processing
-          scanner.stop().then(() => {
+          // Stop scanner
+          scanner.clear().then(() => {
             console.log("Scanner stopped");
           }).catch((err) => {
-            console.error("Failed to stop scanner", err);
+            console.error("Failed to clear scanner", err);
           });
 
         } catch (err) {
