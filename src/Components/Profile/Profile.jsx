@@ -28,10 +28,10 @@ const Profile = ({ onClose }) => {
         />
 
         <h2 className="text-xl font-semibold text-gray-800 mb-1">{student.name}</h2>
-        <p className="text-sm text-gray-600 mb-1"><strong>Reg No:</strong> {student.regNo}</p>
-        <p className="text-sm text-gray-600 mb-1"><strong>Department:</strong> {student.branch}</p>
-        <p className="text-sm text-gray-600 mb-1"><strong>Year:</strong> 3rd Year</p>
-        <p className="text-sm text-gray-600"><strong>Hostel:</strong> A-Block, Room No: 210</p>
+        <p className="text-sm text-gray-600 mb-1"><strong>Reg No:</strong> {student.regId}</p>
+        <p className="text-sm text-gray-600 mb-1"><strong>Department:</strong> {student.department}</p>
+        <p className="text-sm text-gray-600 mb-1"><strong>Year:</strong> {student.year} Year</p>
+        <p className="text-sm text-gray-600"><strong>Hostel:</strong> {student.hostelName}, Room No: {student.roomNo}</p>
       </div>
     </div>
   );
