@@ -9,11 +9,13 @@ import VisitForm from './Components/QRCode/VisitForm'
 import { StudentProvider } from './context/StudentContext.jsx'
 import VisitQRPage from './Components/QRCode/VisitQRPage.jsx'
 import SecurityScanner from './Components/SecurityGuard/SecurityScanner.jsx'
+import QRScanner from './Components/QRCode/QRScanner.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index element={<Home />} />
+      <Route path="student-scan" element={<QRScanner />} />
       <Route path="scan-entry" element={<ScanEntry />} />
       <Route path="visit-form" element={<VisitForm /> } />
       <Route path="qr-display" element={<VisitQRPage />} />
