@@ -10,26 +10,34 @@ const VisitQRPage = () => {
   const [isReturned, setIsReturned] = useState(false);
   const navigate = useNavigate();
 
-  // Load student data on mount
+  const handleReturn = () => {
+    setTimeout(() => {
+      localStorage.removeItem("studentData");
+      saveStudentData({});
+      navigate('/');
+    }, 3000);
+  };
+
+  // Load data on mount
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("studentData"));
-    if (storedData) {
-      setLocalStudentData(storedData);
-      saveStudentData(storedData);
 
+    if (storedData) {
       if (storedData.isReturned) {
         setIsReturned(true);
         handleReturn();
+      } else {
+        setLocalStudentData(storedData);
+        saveStudentData(storedData);
       }
     }
   }, []);
 
-  // Listen to changes from other tab (security scanner)
+  // Detect return updates from another tab (optional)
   useEffect(() => {
     const handleStorageChange = () => {
       const updatedData = JSON.parse(localStorage.getItem("studentData"));
       if (updatedData?.isReturned) {
-        setLocalStudentData(updatedData);
         setIsReturned(true);
         handleReturn();
       }
@@ -38,14 +46,6 @@ const VisitQRPage = () => {
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
-
-  const handleReturn = () => {
-    setTimeout(() => {
-      localStorage.removeItem("studentData");
-      saveStudentData({});
-      navigate('/');
-    }, 3000);
-  };
 
   return (
     <div className="max-w-md mx-auto p-6 mt-10 bg-gray-100 rounded-xl shadow-lg">
