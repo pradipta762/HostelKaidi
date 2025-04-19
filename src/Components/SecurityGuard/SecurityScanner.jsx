@@ -6,25 +6,66 @@ const SecurityScanner = () => {
   const [message, setMessage] = useState("");
   const { saveStudentData } = useContext(StudentContext);
 
+  // Check if return is after 10:00 PM
   const isAfterDeadline = (date) => {
     const deadline = new Date();
-    deadline.setHours(22, 0, 0, 0);
+    deadline.setHours(22, 0, 0, 0); // 10:00 PM
     return date > deadline;
   };
 
+  // Send updated student data to backend
+  const sendUpdateToBackend = async (studentData) => {
+    try {
+      const response = await fetch(
+        `https://hostelkaidi-13.onrender.com/${studentData.uniqid}/update-return`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            returnTime: studentData.returnTime,
+            isReturned: studentData.isReturned,
+            isLate: studentData.isLate,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage(
+          studentData.isLate ? "Student is Late!" : "Student Returned on Time"
+        );
+      } else {
+        setMessage("Failed to update return status");
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error sending data to backend:", error);
+      setMessage("Error updating database");
+    }
+  };
+
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 300 });
+    const scanner = new Html5QrcodeScanner("reader", {
+      fps: 10,
+      qrbox: 300,
+    });
 
     scanner.render(
-      (decodedText) => {
+      async (decodedText) => {
         try {
           const data = JSON.parse(decodedText);
+
           const returnTime = new Date();
           data.isReturned = true;
           data.returnTime = returnTime.toLocaleString();
           data.isLate = isAfterDeadline(returnTime);
-          saveStudentData(data);
-          setMessage(data.isLate ? "Student is Late!" : "Student Returned on Time");
+
+          saveStudentData(data); // optional local context update
+          await sendUpdateToBackend(data); // 🔥 backend update
+
           scanner.clear();
         } catch {
           setMessage("Invalid QR Code!");
@@ -32,7 +73,7 @@ const SecurityScanner = () => {
       },
       (error) => console.warn(`Scan error: ${error}`)
     );
-  }, [saveStudentData]);
+  }, []);
 
   useEffect(() => {
     if (message) {
