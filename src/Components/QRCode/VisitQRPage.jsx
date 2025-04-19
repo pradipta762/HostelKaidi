@@ -1,42 +1,43 @@
-import React, { useContext, useEffect, useState } from "react";
-import QRCodeDisplay from "./QRCodeDisplay";
-import { StudentContext } from "../../context/StudentContext";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from 'react';
+import QRCodeDisplay from './QRCodeDisplay';
+import { StudentContext } from '../../context/StudentContext';
+import { useNavigate } from 'react-router-dom';
 
 const VisitQRPage = () => {
   const { studentData, saveStudentData } = useContext(StudentContext);
   const [isReturned, setIsReturned] = useState(false);
   const navigate = useNavigate();
 
-  // Poll backend to check return status
+  // Fetch updated data from backend every 3 seconds
   useEffect(() => {
-    const interval = setInterval(async () => {
-      if (!studentData?.uniqid) return;
-
+    const fetchUpdatedStatus = async () => {
       try {
-        const res = await fetch(
-          `https://hostelkaidi-13.onrender.com/${studentData.uniqid}/status`
-        );
+        const res = await fetch(`https://hostelkaidi-13.onrender.com/${studentData.uniqid}/status`);
+        const data = await res.json();
 
-        const result = await res.json();
-
-        if (result.isReturned) {
+        // Check if the student has returned
+        if (data?.isReturned) {
           setIsReturned(true);
-          saveStudentData(result); // update context if needed
+          saveStudentData(data); // update local context
 
-          clearInterval(interval); // stop polling
           setTimeout(() => {
             saveStudentData({});
-            navigate("/");
+            navigate('/');
           }, 3000);
         }
-      } catch (err) {
-        console.error("Error checking return status:", err);
+      } catch (error) {
+        console.error("Error fetching updated student status:", error);
       }
-    }, 3000); // check every 3 seconds
+    };
+
+    const interval = setInterval(() => {
+      if (studentData?.uniqid) {
+        fetchUpdatedStatus();
+      }
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [studentData]);
+  }, [studentData?.uniqid]);
 
   return (
     <div className="max-w-md mx-auto p-6 mt-10 bg-gray-100 rounded-xl shadow-lg">
