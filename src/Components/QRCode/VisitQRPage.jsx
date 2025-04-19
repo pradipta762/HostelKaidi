@@ -5,35 +5,35 @@ import { useNavigate } from 'react-router-dom';
 
 const VisitQRPage = () => {
   const { studentData, saveStudentData } = useContext(StudentContext);
-  const [isReturned, setIsReturned] = useState(studentData?.isReturned || false);
-  const [showQRCode, setShowQRCode] = useState(!studentData?.isReturned);
+  const [isReturned, setIsReturned] = useState(false);
+  const [showQRCode, setShowQRCode] = useState(true);
   const navigate = useNavigate();
 
+  const fetchUpdatedStatus = async () => {
+    try {
+      const res = await fetch(`https://hostelkaidi-13.onrender.com/${studentData.uniqid}/status`);
+      const data = await res.json();
+
+      if (data?.status) {
+        setIsReturned(true);
+        setShowQRCode(false);
+        saveStudentData(data);
+
+        setTimeout(() => {
+          saveStudentData({});
+          navigate('/');
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Error fetching updated student status:", error);
+    }
+  };
+
+  // Auto-poll every 3 seconds
   useEffect(() => {
     if (!studentData?.uniqid) return;
 
-    const fetchUpdatedStatus = async () => {
-      try {
-        const res = await fetch(`https://hostelkaidi-13.onrender.com/${studentData.uniqid}/status`);
-        const data = await res.json();
-
-        if (data?.isReturned) {
-          setIsReturned(true);
-          setShowQRCode(false);         // ✅ hide QR code
-          saveStudentData(data);        // update context
-
-          setTimeout(() => {
-            saveStudentData({});
-            navigate('/');
-          }, 3000); // wait before redirect
-        }
-      } catch (error) {
-        console.error("Error fetching updated student status:", error);
-      }
-    };
-
     const interval = setInterval(fetchUpdatedStatus, 3000);
-
     return () => clearInterval(interval);
   }, [studentData?.uniqid]);
 
