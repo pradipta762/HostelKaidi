@@ -5,36 +5,34 @@ import { useNavigate } from 'react-router-dom';
 
 const VisitQRPage = () => {
   const { studentData, saveStudentData } = useContext(StudentContext);
-  const [isReturned, setIsReturned] = useState(false);
+  const [isReturned, setIsReturned] = useState(studentData?.isReturned || false);
+  const [showQRCode, setShowQRCode] = useState(!studentData?.isReturned);
   const navigate = useNavigate();
 
-  // Fetch updated data from backend every 3 seconds
   useEffect(() => {
+    if (!studentData?.uniqid) return;
+
     const fetchUpdatedStatus = async () => {
       try {
         const res = await fetch(`https://hostelkaidi-13.onrender.com/${studentData.uniqid}/status`);
         const data = await res.json();
 
-        // Check if the student has returned
         if (data?.isReturned) {
           setIsReturned(true);
-          saveStudentData(data); // update local context
+          setShowQRCode(false);         // ✅ hide QR code
+          saveStudentData(data);        // update context
 
           setTimeout(() => {
             saveStudentData({});
             navigate('/');
-          }, 3000);
+          }, 3000); // wait before redirect
         }
       } catch (error) {
         console.error("Error fetching updated student status:", error);
       }
     };
 
-    const interval = setInterval(() => {
-      if (studentData?.uniqid) {
-        fetchUpdatedStatus();
-      }
-    }, 3000);
+    const interval = setInterval(fetchUpdatedStatus, 3000);
 
     return () => clearInterval(interval);
   }, [studentData?.uniqid]);
@@ -49,10 +47,14 @@ const VisitQRPage = () => {
         </p>
       ) : (
         <>
-          <QRCodeDisplay studentData={studentData} />
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Please show this QR code to the security guard when returning.
-          </p>
+          {showQRCode && (
+            <>
+              <QRCodeDisplay studentData={studentData} />
+              <p className="mt-4 text-center text-sm text-gray-600">
+                Please show this QR code to the security guard when returning.
+              </p>
+            </>
+          )}
         </>
       )}
     </div>

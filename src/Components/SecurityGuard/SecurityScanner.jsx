@@ -66,7 +66,6 @@ const SecurityScanner = () => {
           saveStudentData(data); // optional local context update
           await sendUpdateToBackend(data); // 🔥 backend update
 
-          scanner.clear();
         } catch {
           setMessage("Invalid QR Code!");
         }
@@ -77,7 +76,7 @@ const SecurityScanner = () => {
 
   useEffect(() => {
     if (message) {
-      const timeout = setTimeout(() => setMessage(""), 3000);
+      const timeout = setTimeout(() => setMessage(""), 4000);
       return () => clearTimeout(timeout);
     }
   }, [message]);
