@@ -29,11 +29,11 @@ const VisitQRPage = () => {
     }
   };
 
-  // Auto-poll every 3 seconds
+  // Auto-poll every 9 seconds
   useEffect(() => {
     if (!studentData?.uniqid) return;
 
-    const interval = setInterval(fetchUpdatedStatus, 3000);
+    const interval = setInterval(fetchUpdatedStatus, 200000);
     return () => clearInterval(interval);
   }, [studentData?.uniqid]);
 
